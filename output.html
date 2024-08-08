@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Output - Inference Engine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #b2d5f3;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+            margin: 0 auto 10px auto;
+            font-size: 14px;
+            resize: none;
+        }
+        #exit-button {
+            background-color: #f3eeed;
+            width: 30%;
+            display: inline-block;
+            margin-top: 10px;
+            color: rgb(136, 22, 22);
+            box-shadow: 3px 5px rgba(218, 19, 19, 0.652);
+            float: right; /* Use 'right' instead of 'inline-end' */
+        }
+        button:hover {
+            opacity: 1.0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Output - Inference Engine</h1>
+        <div class="form-group">
+            <label for="output">Final Output</label>
+            <textarea id="output" rows="4" readonly></textarea>
+        </div>
+        <button type="button" id="exit-button">EXIT</button>
+
+        <script>
+            // Retrieve input and rule from localStorage
+            const input = localStorage.getItem('inputData');
+            const rule = localStorage.getItem('selectedRule');
+            
+            // Perform inference logic based on rule and input
+            let outputText = '';
+            switch (rule) {
+                case 'modus_ponens':
+                    if (input === 'p') {
+                        outputText = `Modus Ponens: Since ${input} is true and ${input} → q, therefore q is true.`;
+                    } else {
+                        outputText = `Modus Ponens: Invalid input for Modus Ponens.`;
+                    }
+                    break;
+                case 'modus_tollens':
+                    if (input === 'q') {
+                        outputText = `Modus Tollens: Since ${input} is false and p → ${input}, therefore p is false.`;
+                    } else {
+                        outputText = `Modus Tollens: Invalid input for Modus Tollens.`;
+                    }
+                    break;
+                case 'hypothetical_syllogism':
+                    // Adjusted the logic to correctly interpret input as propositions
+                    if (input === 'p → q') {
+                        outputText = `Hypothetical Syllogism: Since ${input} and q → r, therefore p → r.`;
+                    } else if (input === 'q → r') {
+                        outputText = `Hypothetical Syllogism: Since p → q and ${input}, therefore p → r.`;
+                    } else {
+                        outputText = `Hypothetical Syllogism: Invalid input for Hypothetical Syllogism.`;
+                    }
+                    break;
+                case 'disjunctive_syllogism':
+                    if (input === 'p ∨ q' || input === '¬p') {
+                        outputText = `Disjunctive Syllogism: Since ${input}, therefore ${input === 'p ∨ q' ? '¬p' : 'p'}.`;
+                    } else {
+                        outputText = `Disjunctive Syllogism: Invalid input for Disjunctive Syllogism.`;
+                    }
+                    break;
+                case 'simplification':
+                    if (input === 'p ∧ q') {
+                        outputText = `Simplification: Since ${input}, therefore p and q.`;
+                    } else {
+                        outputText = `Simplification: Invalid input for Simplification.`;
+                    }
+                    break;
+                case 'conjunction':
+                    if (input === 'p' && rule === 'q') {
+                        outputText = `Conjunction: Since ${input} and ${rule}, therefore p ∧ q.`;
+                    } else {
+                        outputText = `Conjunction: Invalid input for Conjunction.`;
+                    }
+                    break;
+                case 'addition':
+                    if (input === 'p') {
+                        outputText = `Addition: Since ${input}, therefore ${input} ∨ q.`;
+                    } else {
+                        outputText = `Addition: Invalid input for Addition.`;
+                    }
+                    break;
+                case 'resolution':
+                    if (input === 'p ∨ ¬q' && rule === 'q ∨ r' && input === '¬q') {
+                        outputText = `Resolution: Since ${input} and ${rule} and ${input}, therefore r.`;
+                    } else {
+                        outputText = `Resolution: Invalid input for Resolution.`;
+                    }
+                    break;
+                default:
+                    outputText = 'Invalid rule selected.';
+                    break;
+            }
+
+            // Display output
+            document.getElementById('output').value = outputText;
+
+            document.getElementById('exit-button').addEventListener('click', function() {
+                window.close(); // Note: This may not work on all browsers due to security restrictions
+            });
+        </script>
+    </div>
+</body>
+</html>

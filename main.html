@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inference Engine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            background-color: #7d8aef;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #f6f7f9;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        select, textarea, button, input {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+            margin: 0 auto 10px auto;
+            font-size: 14px;
+        }
+        select {
+            border-radius: 25px;
+            box-shadow: 3px 5px rgba(5, 41, 54, 0.652);
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button {
+            cursor: pointer;
+            color: white;
+            border: none;
+            font-weight: bold;
+            border-radius: 25px;
+            background-color: #000000;
+            min-width: 80px; /* Adjust as needed */
+        }
+        button:hover {
+            background-color: #222461;
+        }
+        .textarea {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 25px;
+            box-shadow: 3px 5px rgba(5, 41, 54, 0.652);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Inference Engine</h1>
+        <div class="form-group">
+            <label for="rule">Select Rule of Inference:</label>
+            <select id="rule">
+                <option value="modus_ponens">Modus Ponens</option>
+                <option value="modus_tollens">Modus Tollens</option>
+                <option value="hypothetical_syllogism">Hypothetical Syllogism</option>
+                <option value="disjunctive_syllogism">Disjunctive Syllogism</option>
+                <option value="simplification">Simplification</option>
+                <option value="conjunction">Conjunction</option>
+                <option value="addition">Addition</option>
+                <option value="resolution">Resolution</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="premiseType">Select Premise Type:</label>
+            <select id="premiseType">
+                <option value="p">p (Proposition)</option>
+                <option value="pImpQ">p -> q (Implication)</option>
+                <option value="qImpR">q -> r (Implication)</option>
+                <option value="conclusion">Conclusion</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="englishHypothesis">Enter Premise:</label>
+            <input type="text" id="englishHypothesis" class="form-control" placeholder="Enter premise">
+            <button onclick="convertAndDisplay()" class="btn btn-primary">Add Premise</button>
+        </div>
+        
+        <div class="form-group">
+            <label>Hypotheses (Propositional Logic):</label>
+            <p id="pProposition"></p>
+            <p id="pqProposition"></p>
+            <p id="qrProposition"></p>
+            <p id="conclusionProposition"></p>
+        </div>
+        <button onclick="applyRule()">Apply Rule</button>
+        <div id="output" class="textarea"></div>
+    </div>
+
+    <script>
+        function applyRule() {
+            const rule = document.getElementById('rule').value;
+            const hypotheses = convertHypotheses();
+            let result;
+
+            switch (rule) {
+                case 'modus_ponens':
+                    result = modusPonens(hypotheses.p, hypotheses.pImpQ);
+                    break;
+                case 'modus_tollens':
+                    result = modusTollens(hypotheses.conclusion, hypotheses.pImpQ);
+                    break;
+                case 'hypothetical_syllogism':
+                    result = hypotheticalSyllogism(hypotheses.pImpQ, hypotheses.qImpR);
+                    break;
+                case 'disjunctive_syllogism':
+                    result = disjunctiveSyllogism(hypotheses.p, hypotheses.conclusion);
+                    break;
+                case 'simplification':
+                    result = simplification(hypotheses.p);
+                    break;
+                case 'conjunction':
+                    result = conjunction(hypotheses.p, hypotheses.pImpQ);
+                    break;
+                case 'addition':
+                    result = addition(hypotheses.p);
+                    break;
+                case 'resolution':
+                    result = resolution(hypotheses.p, hypotheses.qImpR);
+                    break;
+                default:
+                    result = "Unknown rule of inference";
+            }
+
+            const outputText = result ? "valid" : "not valid";
+            document.getElementById('output').innerHTML = `Using ${rule.replace('_', ' ')}, the conclusion is ${outputText}`;
+        }
+
+        function convertHypotheses() {
+            // Retrieve hypotheses from the input fields
+            const p = document.getElementById('pProposition').textContent.split(': ')[1] || '';
+            const pImpQ = document.getElementById('pqProposition').textContent.split(': ')[1] || '';
+            const qImpR = document.getElementById('qrProposition').textContent.split(': ')[1] || '';
+            const conclusion = document.getElementById('conclusionProposition').textContent.split(': ')[1] || '';
+
+            return { p, pImpQ, qImpR, conclusion };
+        }
+
+        let p = '';
+        let pq = '';
+        let qr = '';
+        let conclusion = '';
+
+        function convertAndDisplay() {
+            const premise = document.getElementById('englishHypothesis').value.trim();
+            const premiseType = document.getElementById('premiseType').value;
+
+            if (premise === '') {
+                alert('Please enter a premise!');
+                return;
+            }
+
+            if (premiseType === 'p') {
+                p = `p: ${premise}`;
+                document.getElementById('pProposition').textContent = p;
+            } else if (premiseType === 'pImpQ') {
+                pq = `p → q: ${premise}`;
+                document.getElementById('pqProposition').textContent = pq;
+            } else if (premiseType === 'qImpR') {
+                qr = `q → r: ${premise}`;
+                document.getElementById('qrProposition').textContent = qr;
+            } else if (premiseType === 'conclusion') {
+                conclusion = `conclusion: ${premise}`;
+                document.getElementById('conclusionProposition').textContent = conclusion;
+            } else {
+                alert('Premise type already filled or invalid.');
+                return;
+            }
+
+            document.getElementById('englishHypothesis').value = '';
+        }
+
+        function modusPonens(p, pImpQ) {
+            return p && pImpQ;
+        }
+
+        function modusTollens(notQ, pImpQ) {
+            return !notQ && pImpQ;
+        }
+
+        function hypotheticalSyllogism(pImpQ, qImpR) {
+            return pImpQ && qImpR;
+        }
+
+        function disjunctiveSyllogism(pOrQ, notP) {
+            return pOrQ && notP;
+        }
+
+        function simplification(pAndQ) {
+            return pAndQ;
+        }
+
+        function conjunction(p, q) {
+            return p && q;
+        }
+
+        function addition(p) {
+            return p || true;
+        }
+
+        function resolution(pOrQ, notPOrR) {
+            return pOrQ && notPOrR;
+        }
+    </script>
+</body>
+</html>

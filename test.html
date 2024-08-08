@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inference Engine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px; /* Specify units (e.g., px) */
+            padding: 0;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #b2d5f3;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        select, textarea, button, input {
+            display: block;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px solid #ccc;
+            margin: 0 auto 10px auto;
+            font-size: 14px;
+        }
+        select {
+            border-radius: 25px;
+            box-shadow: 3px 5px rgba(5, 41, 54, 0.652);
+        }
+        textarea {
+            border-radius: 25px;
+            box-shadow: 3px 5px rgba(5, 41, 54, 0.652);
+        }
+        button {
+            cursor: pointer;
+            color: white;
+            border: none;
+            font-weight: bold;
+            border-radius: 25px;
+            background-color: #000000;
+            width: 100px;
+            min-width: 80px; /* Adjust as needed */
+        }
+        #exit-button {
+            background-color: #f3eeed;
+            width: 30%;
+            display: inline-block;
+            margin-top: 10px;
+            color: rgb(136, 22, 22);
+            box-shadow: 3px 5px rgba(218, 19, 19, 0.652);
+            float: right; /* Use 'right' instead of 'inline-end' */
+        }
+        button:hover {
+            opacity: 1.0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Inference Engine</h1>
+        <div class="form-group">
+            <label>Hypotheses (English):</label>
+            <p>1. Ali works hard</p>
+            <p>2. If Ali works hard, then he is a dull boy</p>
+            <p>3. If Ali is a dull boy, then he will not get the job</p>
+        </div>
+        <div class="form-group">
+            <label>Hypotheses (Propositional Logic):</label>
+            <p>p: Ali works hard</p>
+            <p>p → q: If Ali works hard, then he is a dull boy</p>
+            <p>q → r: If Ali is a dull boy, then he will not get the job</p>
+        </div>
+        <div class="form-group">
+            <label for="input">Enter Your Input</label>
+            <input type="text" id="input"> <!-- Added input element with id -->
+            <select id="rule">
+                <option value="modus_ponens">Modus Ponens</option>
+                <option value="modus_tollens">Modus Tollens</option>
+                <option value="hypothetical_syllogism">Hypothetical Syllogism</option>
+                <option value="disjunctive_syllogism">Disjunctive Syllogism</option>
+                <option value="simplification">Simplification</option>
+                <option value="conjunction">Conjunction</option>
+                <option value="addition">Addition</option>
+                <option value="resolution">Resolution</option>
+            </select>
+            <button type="button" id="check-button">CHECK</button>
+        </div>
+
+        <script>
+            document.getElementById('check-button').addEventListener('click', function() {
+                const input = document.getElementById('input').value;
+                const rule = document.getElementById('rule').value;
+                // Store input and rule in localStorage or pass as query parameters
+                localStorage.setItem('inputData', input);
+                localStorage.setItem('selectedRule', rule);
+                // Redirect to output page
+                window.location.href = 'output.html';
+            });
+
+            document.getElementById('exit-button').addEventListener('click', function() {
+                window.close(); // Note: This may not work on all browsers due to security restrictions
+            });
+        </script>
+    </div>
+</body>
+</html>
